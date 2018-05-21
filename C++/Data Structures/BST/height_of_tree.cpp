@@ -42,7 +42,7 @@ int main()
   root = Insert(root,8);
   root = Insert(root,12);
   root = Insert(root, 27);
-    root = Insert(root, 29);
+  root = Insert(root, 29);
   int height = Height(root);
   cout<<"The height of tree is: "<<height<<endl;
   return 0;

@@ -1,23 +1,29 @@
-#include <iostream>
-using namespace std;
-
-struct Node
+ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
 {
-  Node* next;
-  int data;
-};
+    ListNode *p1 = headA;
+    ListNode *p2 = headB;
 
- Node* Insert(Node* head; int data)
- {
-   Node* node = new Node();
-   node->next = NULL;
-   node->data = data;
-   if(head==NULL) head = node;
-   Node* curr = head;
-   while(curr->next !=NULL)
- }
+    if (p1 == NULL || p2 == NULL) return NULL;
 
-int main()
-{
-  return 0;
+    while (p1 != NULL && p2 != NULL && p1 != p2) {
+        p1 = p1->next;
+        p2 = p2->next;
+
+        //
+        // Any time they collide or reach end together without colliding
+        // then return any one of the pointers.
+        //
+        if (p1 == p2) return p1;
+
+        //
+        // If one of them reaches the end earlier then reuse it
+        // by moving it to the beginning of other list.
+        // Once both of them go through reassigning,
+        // they will be equidistant from the collision point.
+        //
+        if (p1 == NULL) p1 = headB;
+        if (p2 == NULL) p2 = headA;
+    }
+
+    return p1;
 }
