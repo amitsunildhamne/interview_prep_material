@@ -1,51 +1,32 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <ctime>
+#include <cstdlib>
+
 using namespace std;
 
-int partition(vector<int>& v, int low, int high)
+int binary_search_helper(vector<int>& v, int start, int end, int data_to_find)
 {
-  int pivot = v[high];
-  int i = low;
-  for(int j=low; j<high; ++j)
-  {
-    if(pivot>=v[j])
-    {
-      swap(&v[i], &v[j])
-      ++i;
-    }
-  }
-  swap(&v[i],&v[high]);
-  return i;
+  if (start>=end) return -1;
+  else{
+  int mid = start+end/2;
+  if (v[mid]==data_to_find) return mid;
+  else if (v[mid]>data_to_find) return binary_search_helper(v, start, mid-1, data_to_find);
+  else return binary_search_helper(v, mid+1, end, data_to_find);}
 }
 
-void sort(vector<int>& v, int low, int high)
+void binary_search(vector<int>& v, int data_to_find)
 {
-  while(low<=high)
-  {
-    int pindex= partition(v, low, high);
-    sort(v, low, pindex-1);
-    sort(v, pindex+1, high);
-  }
-}
-
-void Print(vector<int>& v)
-{
-  for(int i=0; i<v.size();++i)
-  {
-    cout<<v[i]<<" ";
-  }
-  cout<<endl;
+  cout<<binary_search_helper(v,0, v.size()-1,data_to_find)<<endl;
 }
 
 int main()
 {
   vector <int> v;
-  v.push_back(5);
-  v.push_back(7);
-  v.push_back(1);
-  v.push_back(3);
-  v.push_back(0);
-  sort(v, 0, v.size()-1);
-  Print(v);
+  srand(time(NULL));
+  for(int i=0; i<10; ++i) v.push_back(rand()%100);
+  sort(v.begin(),v.end());
+  binary_search(v,v[3]);
   return 0;
 }
