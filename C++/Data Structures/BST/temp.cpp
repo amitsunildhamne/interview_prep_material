@@ -1,115 +1,121 @@
 #include <iostream>
-#include <queue>
 #include <climits>
+#include <queue>
 using namespace std;
 
 struct Node
 {
-  int data;
-  Node* left;
-  Node* right;
+    int value;
+    Node *left;
+    Node *right;
 };
 
-Node* GetNewNode(int data)
+Node *GetNewNode(int data)
 {
-  Node* node = new Node();
-  node->data = data;
-  node->left = node->right = NULL;
+  Node *node = new Node();
+  node->value =  data;
+  node->left  =  NULL;
+  node->right =  NULL;
 }
 
-Node* Insert(Node* root, int data)
+Node *Insert(Node* root, int data)
 {
-  if (root==NULL) root= GetNewNode(int data);
-  else if (root->data>data) root->left = Insert(root->left, int data);
-  else root->right = Insert(root->right, int data);
-  return root;
-}
-
-void Print(Node* root)
-{
-  if (root==NULL) return;
-  Print(root->left);
-  cout<<root->data<<" ";
-  Print(root->right);
-}
-
-int maxHeight(Node* root)
-{
-  if (root==NULL) return -1;
-  return max(maxHeight(root->left),maxHeight(root->right))+1 ;
-}
-
-int minHeight(Node* root)
-{
-  if (root==NULL) return 0;
-  queue <int> Q;
-  Q.push(root);
-  int sum;
-  while(!Q.empty())
-  {
-    Node* curr = Q.front();
-    Q.pop();
-    if (curr->left) Q.push(curr->left);
-    if (curr->right) Q.push(curr->right);
-    if (curr->left==curr->right==NULL) return sum;
-    ++sum;
-  }
-  return sum;
-}
-
-bool isBST(Node* root, int minLimit, int maxLimit)
-{
-  if (root==NULL) return NULL;
-  if (root->data>minLimit && root->data<maxLimit && isBST(root->right,root->data, maxLimit) && isBST(root->left, minLimit, root->data)) return true;
-  else return 0;
-}
-
-Node* findNode(,Node* root, int data)
-{
-  if(root==NULL) return NULL;
-  else if( root->data == data) return root;
-  else if (root->data>data) return findNode(root->left);
-  else return findNode(root->right);
-}
-
-Node* FindMin(Node* root)
-{
-  if(root->left==NULL && root->right==NULL) return root;
-  return FindMin(root->left);
-}
-
-Node* Delete(Node* root, int data_to_delete)
-{
-  if (root==NULL) return root;
-  else if (root->data>data) root->left= Delete(root->left, data_to_delete);
-  else if (root->data<data) root->right = Delete(root->right, data_to_delete);
-  else
-  {
-    if (root->right==root->left==NULL)
+    if ( root==NULL )
     {
-      delete root;
-      root = NULL;
+        root =  GetNewNode(data);
     }
-    else if (root->right==NULL)
+    else if ( data <= root->value )
     {
-      Node* temp = root;
-      root = root->left;
-      delete temp;
-    }
-    else if (root->left ==NULL)
-    {
-      Node* temp = root;
-      root = root->right;
-      delete temp;
+        root->left = Insert(root->left, data);
     }
     else
     {
-      Node* temp = FindMin(root->right);
-      root->data = temp->data;
-      root->right = Delete(root->right,root->data)
+        root->right = Insert(root->right, data);
     }
-  }
-  return root;
+    return root;
+}
+
+void Print(Node *root)
+{
+    if (root == NULL) return;
+    Print( root-> left);
+    cout<<root->value<<" "<<endl;
+}
+
+int minHeight(Node *root)
+{
+    if ( root==NULL )
+    {
+       return -1;
+    }
+    else if (root->left==NULL)
+    {
+        return root->value;
+    }
+    else
+    {
+        return minHeight(root->left);
+    }
+}
+
+int Height(Node *root)
+{
+   if (root == NULL)
+   {
+      return 0;
+   }
+
+   else return max(Height(root->left), Height(root->right))+1;
+}
+
+bool isBST(Node *root, int min, int max)
+{
+    if (root==NULL) return 1;
+    else if ( (root->value >= min) &&
+              (root->value <= max) &&
+              isBST(root->left, min, root->value) &&
+              isBST(root->right, root->value, max) )
+              {
+                 return 1;
+              }
+    return 0;
+}
+
+void BFS(Node *root)
+{
+   if (root == NULL) return;
+   int counter;
+   queue<Node *> Q;
+   Q.push(root);
+   while(1)
+   {
+     if (Q.empty()) break;
+     counter = Q.size();
+     while(counter)
+     {
+       Node *node = Q.front();
+       cout<<node->value<<" ";
+       Q.pop();
+       if (node->left)  Q.push(node->left);
+       if (node->right) Q.push(node->right);
+       --counter;
+     }
+     cout<<endl;
+   }
+}
+
+void deleteNode(Node *root, int value)
+{
+    if  (root==NULL) return;
+    else if (root->value > value) deleteNode(root->left, value);
+    else if (root->value < value) deleteNode(root->right, value);
+    else
+    {
+      if (root->left == NULL && root->right == NULL)
+      {
+
+      }
+    }
 }
 
 int main()
@@ -123,7 +129,9 @@ int main()
 	root = Insert(root,12);
   Print(root);
   cout<<"Min Height: "<<minHeight(root)<<endl;
-  cout<<"Max Height: "<<maxHeight(root)<<endl;
+  cout<<"Max Height: "<<Height(root)<<endl;
   cout<<"Is BST: "<<isBST(root,INT_MIN,INT_MAX)<<endl;
+  BFS(root);
+  deleteNode(root, 10);
   return 0;
 }

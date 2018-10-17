@@ -1,3 +1,6 @@
+/*
+ Method to reverse a sentence
+*/
 #include <iostream>
 #include <vector>
 #include <sstream>

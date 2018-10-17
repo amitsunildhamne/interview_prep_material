@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void replace(char a[])
+void replace(char *a)
 {
   int length = strlen(a);
   for(int i=0;i<length-1;++i)
