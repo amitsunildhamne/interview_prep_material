@@ -1,0 +1,24 @@
+
+From stackoverflow:
+https://stackoverflow.com/questions/10392800/how-does-pthread-implemented-in-linux-kernel-3-2
+On Linux pthread uses the clone syscall with a special flag CLONE_THREAD.
+
+See the documentation of clone syscall.
+
+CLONE_THREAD (since Linux 2.4.0-test8)
+
+If CLONE_THREAD is set, the child is placed in the same thread group as the calling process.
+To make the remainder of the discussion of CLONE_THREAD more readable, the term "thread" is
+used to refer to the processes within a thread group.
+
+Thread groups were a feature added in Linux 2.4 to support the POSIX threads notion of a set
+of threads that share a single PID. Internally, this shared PID is the so-called thread group
+identifier (TGID) for the thread group (value returned by gettid or pthread_self). Since Linux 2.4, calls to getpid(2) return the TGID 
+of the caller.
+
+And in fact, Linux do change its thread implementation, since POSIX.1 requires threads share a same process ID.
+
+   In the obsolete LinuxThreads implementation, each of the threads in a process
+   has a different process ID.  This is in violation of the POSIX threads
+   specification, and is the source of many other nonconformances to the
+   standard; see pthreads(7)

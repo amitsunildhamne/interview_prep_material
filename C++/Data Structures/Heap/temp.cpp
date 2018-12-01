@@ -1,99 +1,108 @@
 #include <iostream>
 #include <vector>
-
+#include <climits>
 using namespace std;
 
 class Heap
 {
 private:
-  vector<int> A;
-  void heapify_up(int i);
-  void heapify_down(int i);
-  int Left(int i);
-  int Right(int i);
-  int Parent(int i);
-
+  int capacity;
+  int count;
+  vector <int> v;
 public:
-  int size();
-  void push(int data);
-  void pop();
-  int top();
+  int left(int i)
+  {
+    return (2*i + 1);
+  }
+  int right(int i)
+  {
+    return (2*i + 2 );
+  }
+  int parent(int i) { return (i - 1)/2 ;   }
+
+  Heap(int capacity)
+  {
+    this->capacity = capacity;
+    v.reserve(capacity);
+    for (int i = 0; i < capacity ; ++i)
+    {
+      v.push_back(0);
+    }
+    this->count = 0;
+  }
+
+  void Heapify(int i);
+  void removeMin();
+  void deleteVal(int i);
+  void decreaseKey(int i, int new_val);
+  int addVal(int val);
 };
 
-int Heap::Parent(int i)
+void Heap::Heapify(int i)
 {
-  return (i-1)/2;
-}
-
-int Heap::Left(int i)
-{
-  return i*2+1;
-}
-
-int Heap::Right(int i)
-{
-  return i*2+2;
-}
-
-void Heap::heapify_down(int i)
-{
-  int largest = i;
-  int left = Left(i);
-  int right = Right(i);
-
-  if(left<size() && A[left]>A[largest])
-  largest = left;
-  if(right<size() && A[right]>A[largest])
-  largest = right;
-
-  if(largest!=i)
+  int l = left(i);
+  int r = right(i);
+  int smallest = i;
+  if (l < count && v[i] > v[l])
   {
-    swap(A[i], A[largest]);
-    heapify_down(largest);
+    smallest = l;
+  }
+  if (r < count && v[smallest] > v[r])
+  {
+    smallest = r;
+  }
+  if (i != smallest)
+  {
+    swap(&v[i], &v[smallest]);
+    Heapify(smallest);
   }
 }
 
-int Heap::size()
+void Heap::removeMin()
 {
-  return A.size();
+  if (count == 0)
+  {
+    return INT_MAX;
+  }
+  else if ( count == 1)
+  {
+    --count;
+    return v[0];
+  }
+  v[0] = v[v.size() - 1];
+  --count;
+  Heapify(0);
 }
 
-void Heap::heapify_up(int i)
+int deleteVal(int i)
 {
-  if(i && A[Parent(i)]<A[i])
+  decreaseKey(i, INT_MIN);
+  removeMin();
+}
+
+void decreaseKey(int i, int new_val)
+{
+  v[i] = new_val;
+  while(i != 0 && v[parent(i)] > v[i] )
   {
-    swap(A[i],A[Parent(i)]);
-    heapify_up(Parent(i));
+    swap(&v[i], &v[parent(i)]);
+    i = parent(i);
   }
 }
 
-void Heap::push(int data)
+int addVal(int val)
 {
-  A.push_back(data);
-  int sz = size()  -1;
-  heapify_up(sz);
-}
-
-void Heap::pop()
-{
-  if(size()==0) return;
-  A[0] = A.back();
-  A.pop_back();
-  heapify_down(0);
-}
-
-int Heap::top()
-{
-  return A.at(0);
-}
-
-int main()
-{
-  Heap pq;
-  pq.push(3);
-  pq.push(2);
-  pq.push(15);
-  cout<<"PQ size "<<pq.size()<<endl;
-  cout<<pq.top()<<" ";
-  pq.pop();
+  if (count + 1 > capacity)
+  {
+    return -1;
+  }
+  ++count;
+  count - 1;
+  v[i] = val;
+  while(i != 0 && v[parent(i)] > v[i])
+  {
+    swap(&v[i], &v[parent(i)]);
+    i = parent(i);
+  }
+  return 0;
 }

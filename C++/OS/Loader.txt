@@ -1,0 +1,100 @@
+This largely depends on the operating system. What I will write here is Linux specific,
+but the similar things happens on other operating systems.
+
+First, the fork() call is initiated, effectively creating new process
+(and appropriate PCB entry). The next step is calling exec system call which will
+do the hard work. I'll assume that we're talking about ELF executables here.
+
+In that case, after recognizing that this is the ELF executable (by inspecting
+magic number) exec will call load_elf_binary
+(http://lxr.free-electrons.com/source/fs/binfmt_elf.c#L664)
+
+The argument struct linux_binprm *bprm that is passed to this function contains
+all the metadata about binary (already filled by exec) such is executable name,
+environment info, etc.
+(http://lxr.free-electrons.com/source/include/linux/binfmts.h#L14)
+
+The ELF program loading is a complex task, and it requires understanding of the
+ELF format.
+
+The very good resource on this can be found here
+
+In a nutshell, these are interesting steps that kernel is performing:
+
+checks the elf headers to find if there's an program interpreter specified for
+this binary (ld.so is used for dynamically linking the required libraries,
+peforms the relocations, calls initialization functions for the linked
+libraries).
+
+Setup the new executable environment (setup the the new credentials, mark the
+point of no return, for example)
+
+Setup the memory layout (like randomize the stack) and map the pages from
+executable to memory
+
+Calls start_thread and starts either program or the interpreter (ld.so)
+
+Good document on understanding of elf with interpreters can be found here
+
+Resources:
+
+https://www.cs.stevens.edu/~jschauma/631/elf.html
+http://www.skyfree.org/linux/references/ELF_Format.pdf
+https://stackoverflow.com/a/31394861/133707
+http://s.eresi-project.org/inc/articles/elf-rtld.txt
+
+
+Detail:
+
+After compilation we generate an executable. This executable is in binary elf
+format. It contains the following header info:
+
+Given in: https://www.cs.stevens.edu/~jschauma/631/elf.html
+
+How does loading take place?
+Loading is OS dependent. For Unix:
+
+1. sys_execve function (in arch/x86/kernel/process.c) handles the execvc system
+call from user space. It calls do_execve function. do_execve function (in fs/exec.c)
+opens the executable binary file and does some preparation. It calls
+search_binary_handler function.
+2. search_binary_handler function (in fs/exec.c) finds out the type of executable
+binary and calls the corresponding handler, which in our case, is load_elf_binary
+function.
+3. load_elf_binary (in fs/binfmt_elf.c) loads the user's executable binary file
+into memory. It allocates memory segments and zeros out the BSS section by calling
+the padzero function.
+4. load_elf_binary also examines whether the user's executable binary contains
+an INTERP segment or not.
+
+5. If the executable binary is dynamically linked, then the compiler will usually
+creates an INTERP segment (which is usually the same as .interp section in ELF's
+"linking view"), which contains the full pathname of an "interpreter", usually
+is the Glibc runtime linker ld.so.
+To see this, use command readelf -p .interp a.out
+
+According to AMD64 System V Application Binary Interface, the only valid interpreter
+for programs conforming to AMD64 ABI is /lib/ld64.so.1 and on Linux, GCC usually
+uses /lib64/ld-linux-x86-64.so.2 or /lib/ld-linux-x86-64.so.2 instead:
+
+$ gcc -dumpspecs
+....
+
+*link:
+...
+  %{!m32:%{!dynamic-linker:-dynamic-linker %{muclibc:%{mglibc:%e-mglibc and -muclibc used
+together}/lib/ld64-uClibc.so.0;:/lib/ld-linux-x86-64.so.2}}}}
+...
+To change the runtime linker, compile the program using something like
+
+gcc foo.c -Wl,-I/my/own/ld.so
+The System V Application Binary Interface specifies, the operating system, instead
+of running the user's executable binary, should run this "interpreter". This
+interpreter should complete the binding of user's executable binary to its
+dependencies.
+
+6. Thus, if the ELF executable binary file contains an INTERP segment,
+load_elf_binary will call load_elf_interp function to load the image of this
+interpreter as well.
+Finally, load_elf_binary calls start_thread (in arch/x86/kernel/process_64.c)
+and passes control to either the interpreter or the user program.

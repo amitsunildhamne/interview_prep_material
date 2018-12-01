@@ -1,137 +1,176 @@
 #include <iostream>
-#include <climits>
 #include <queue>
+#include <climits>
+
 using namespace std;
 
 struct Node
 {
     int value;
-    Node *left;
-    Node *right;
+    Node *right, *left;
 };
 
-Node *GetNewNode(int data)
+Node *GetNewNode(int value)
 {
   Node *node = new Node();
-  node->value =  data;
-  node->left  =  NULL;
-  node->right =  NULL;
+  node->value = value;
+  node->left = node->right = NULL;
+  return node;
 }
 
-Node *Insert(Node* root, int data)
+Node *Insert(Node *root, int value)
 {
-    if ( root==NULL )
-    {
-        root =  GetNewNode(data);
-    }
-    else if ( data <= root->value )
-    {
-        root->left = Insert(root->left, data);
-    }
-    else
-    {
-        root->right = Insert(root->right, data);
-    }
-    return root;
+  if (root == NULL)
+  {
+    return GetNewNode(value);
+  }
+  else if (root->value > value)
+  {
+    root->left = Insert(root->left, value);
+  }
+  else
+  {
+    root->right = Insert(root->right, value);
+  }
+  return root;
 }
 
 void Print(Node *root)
 {
-    if (root == NULL) return;
-    Print( root-> left);
-    cout<<root->value<<" "<<endl;
+  if (root == NULL)
+  {
+    return;
+  }
+  Print(root->left);
+  cout<<root->value<<" ";
+  Print(root->right);
 }
 
-int minHeight(Node *root)
+int MaxHeight(Node *root)
 {
-    if ( root==NULL )
+    if (root == NULL)
     {
-       return -1;
-    }
-    else if (root->left==NULL)
-    {
-        return root->value;
-    }
-    else
-    {
-        return minHeight(root->left);
-    }
-}
-
-int Height(Node *root)
-{
-   if (root == NULL)
-   {
       return 0;
-   }
-
-   else return max(Height(root->left), Height(root->right))+1;
+    }
+    return max(root->left, root->right ) + 1;
 }
 
-bool isBST(Node *root, int min, int max)
+void bfs(Node *root)
 {
-    if (root==NULL) return 1;
-    else if ( (root->value >= min) &&
-              (root->value <= max) &&
-              isBST(root->left, min, root->value) &&
-              isBST(root->right, root->value, max) )
-              {
-                 return 1;
-              }
-    return 0;
-}
-
-void BFS(Node *root)
-{
-   if (root == NULL) return;
-   int counter;
-   queue<Node *> Q;
-   Q.push(root);
-   while(1)
-   {
-     if (Q.empty()) break;
-     counter = Q.size();
-     while(counter)
-     {
-       Node *node = Q.front();
-       cout<<node->value<<" ";
-       Q.pop();
-       if (node->left)  Q.push(node->left);
-       if (node->right) Q.push(node->right);
-       --counter;
-     }
-     cout<<endl;
-   }
-}
-
-void deleteNode(Node *root, int value)
-{
-    if  (root==NULL) return;
-    else if (root->value > value) deleteNode(root->left, value);
-    else if (root->value < value) deleteNode(root->right, value);
+  if (root == NULL)
+  {
+    return;
+  }
+  int sizeOfQueue = 0;
+  queue <Node *> q;
+  q.push(root);
+  while(1)
+  {
+    if (q.empty)
+    {
+      return;
+    }
     else
     {
-      if (root->left == NULL && root->right == NULL)
-      {
-
-      }
+        sizeOfQueue = q.size();
     }
+    while(sizeOfQueue>0)
+    {
+      Node *temp  = q.front();
+      q.pop();
+      cout<<temp->value<<" ";
+      if (temp->left != NULL)
+      {
+        q.push(temp->left);
+      }
+      if (temp->right != NULL)
+      {
+        q.push(temp->right);
+      }
+      --sizeOfQueue;
+    }
+    cout<<endl;
+  }
+}
+
+int isBSTHelper(Node *root, int min, int max)
+{
+  if (root == NULL)
+  {
+    return 1;
+  }
+  if ( ( root->value >= min ) &&
+       ( root->value <  max ) &&
+       ( isBSTHelper( root->left, min, root->value  ) ) &&
+       ( isBSTHelper( root->right, root->value, max ) ) &&
+     )
+     {
+        return 1;
+     }
+  return 0;
+}
+
+Node *deleteNode( Node *root, int value)
+{
+  if( root == NULL )
+  {
+    return NULL;
+  }
+  else if ( root->value > value )
+  {
+    root->left = deleteNode(root->left, value);
+  }
+  else if ( root->value < value)
+  {
+    root->right = deleteNode(root->right, value);
+  }
+  else
+  {
+    if ( root->left == NULL )
+    {
+      Node *temp = root;
+      root = root->right;
+      delete( temp );
+    }
+    else if ( root->right == NULL )
+    {
+      Node *temp = root;
+      root = root->left;
+      delete( temp );
+    }
+    else
+    {
+      Node *temp = findMin(root->right);
+      root->value = temp->value;
+      root->right = deleteNode( root->right, root->value );
+    }
+  }
+  return root;
+}
+
+int isBST(Node *root)
+{
+  int max = INT_MAX;
+  int min = INT_MIN;
+  return isBSTHelper(Node *root, min, max);
 }
 
 int main()
 {
-  Node* root=NULL;
+  Node *root = NULL;
   root = Insert(root,15);
-	root = Insert(root,10);
-	root = Insert(root,20);
-	root = Insert(root,25);
-	root = Insert(root,8);
-	root = Insert(root,12);
+  root = Insert(root,10);
+  root = Insert(root,20);
+  root = Insert(root,25);
+  root = Insert(root,8);
+  root = Insert(root,12);
+  root = Insert(root, 27);
+  root = Insert(root, 29);
   Print(root);
-  cout<<"Min Height: "<<minHeight(root)<<endl;
-  cout<<"Max Height: "<<Height(root)<<endl;
-  cout<<"Is BST: "<<isBST(root,INT_MIN,INT_MAX)<<endl;
-  BFS(root);
-  deleteNode(root, 10);
+  cout<<endl;
+  cout<<MaxHeight(root)<<endl;
+  bfs(root);
+  isBST(root);
+  void deleteNode( Node *root, int value);
   return 0;
 }

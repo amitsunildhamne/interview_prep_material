@@ -32,12 +32,12 @@ void print_list(Node* head)
  }
 }
 
-ListNode* sortList(ListNode* head) {
+Node* sortList(Node* head) {
        if (head == NULL || head->next == NULL)
            return head;
 
-       ListNode* slow = head;
-       ListNode* fast = head->next;
+       Node* slow = head;
+       Node* fast = head->next;
 
        while (fast != NULL && fast->next != NULL)
        {
@@ -51,10 +51,10 @@ ListNode* sortList(ListNode* head) {
        return merge(sortList(head), sortList(fast));
    }
 
-   ListNode* merge(ListNode* l1, ListNode* l2)
+   Node* merge(Node* l1, Node* l2)
    {
-       ListNode dump(0);
-       ListNode* cur = &dump;
+       Node dump(0);
+       Node* cur = &dump;
 
        while (l1 != NULL && l2 != NULL)
        {
