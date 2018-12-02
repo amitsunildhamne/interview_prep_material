@@ -4,8 +4,6 @@
 #include <utility>
 using namespace std;
 
-
-
 struct Edge
 {
   int src, dest,weight;
