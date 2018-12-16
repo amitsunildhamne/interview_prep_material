@@ -1,45 +1,68 @@
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 #include <queue>
-#include <utility>
-using namespace std;
 
-struct Edge
-{
-  int src, dest,weight;
-}
+using namespace std;
 
 class Graph
 {
+private:
+  unordered_map<int, bool> visited;
+  unordered_map<int, vector<int>> adj_list;
+  int node_count;
 public:
-  vector<pair<int, int>> adjList;
-  int N;
-  Graph(vector<Edge> edges, int N)
+  Graph(int node_count)
   {
-    adjList.resize(N);
-    for (int i=0;i<edges.size();++i)
-    {
-       int src = edges[i].src;
-       int dest = edges[i].dest;
-       int weight = edges[i].weight;
-       adjList[src].push_back(make_pair(dest, weight));
-    }
+      this->node_count = node_count;
+  }
+
+  void Insert(int node_value, vector<int> &neighbours)
+  {
+      visited[node_value] = false;
+      for (int i = 0; i < neighbours.size(); ++i)
+      {
+        adj_list[node_value].push_back(neighbours[i]);
+        visited[neighbours[i]] = false;
+      }
+  }
+
+  void BFS()
+  {
+      queue <int> Q;
+      auto itr = adj_list.begin();
+      Q.push(itr.first);
+      while(!Q.empty)
+      {
+        int key = Q.front();
+        Q.pop_front();
+        cout<<"Node: "<<key<< " ";
+        visited[key] = true;
+        for(auto v_itr = (itr.second).begin(); v_itr != (itr.second).end(); ++v_itr)
+        {
+          if(visited[*v_itr] == false )
+          {
+            Q.push(*v_itr);
+          }
+        }
+      }
+  }
+
+  void DFS(int v)
+  {
+      visited[v] = true;
+      cout<<"Node: "<<v<<" ";
+      for(int i = 0; i < adj_list[v].size(); ++i)
+      {
+        if (visited[adj_list[v][i]] == false)
+        {
+          DFS(adj_list[v][i]);
+        }
+      }
   }
 };
 
-void Print(Graph const &G)
-{
-  for(int i=0;i<N;++i)
-  {
-    vector<pair<int,int>> ::const_iterator itr;
-    for(itr=adjList[i].begin();itr!=adjList.end();++itr)
-    {
-      cout<<i<<" "<<i<<" "<<adjList[i].first<<" "<<adjList[i].second<<endl;
-    }
-  }
-}
-
 int main()
 {
-  return 0;
+
 }

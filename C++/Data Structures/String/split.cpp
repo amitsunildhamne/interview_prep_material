@@ -19,7 +19,7 @@ int main()
 	vector<char*>::const_iterator itr;
 	for(itr = v.begin();itr!=v.end();itr++)
 	cout<<*itr<<endl; */
-	std::string str = "PALLI TERI L**G**ND";
+	std::string str = "HAPPY NEW YEAR";
 	std::istringstream iss(str);
 	std::string token;
 	while(getline(iss, token, ' '))
