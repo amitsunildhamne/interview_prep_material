@@ -43,7 +43,7 @@ void BFS(int M[][10], int size_x, int size_y, int start_x, int start_y)
       cout<<M[temp.row][temp.col]<<" ";
       if (temp.row > 0 && visited[temp.row][temp.col] == false)
       {
-          Q.push(QItem(temp.row-1 , temp.col));
+          Q.push(QItem(temp.row-1, temp.col));
           visited[temp.row-1][temp.col] = true;
       }
 

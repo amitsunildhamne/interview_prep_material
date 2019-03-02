@@ -1,0 +1,21 @@
+How does kernel boot:
+https://www.ibm.com/developerworks/library/l-linuxboot/index.html
+https://github.com/nu11secur1ty/All-Stages-of-Linux-Booting-Process-
+
+Linux RT patch:
+https://www.linuxjournal.com/article/10165
+https://rt.wiki.kernel.org/index.php/Frequently_Asked_Questions
+
+Why spinlocks used?
+1. Rescheduling takes more cycles than spinlock
+2. Can be used in interrupts (only lock) because it doesn't sleep and intrs cannot sleep. Spinlocks are mutually ex
+
+In RTLinux they become preemptible (technically mutex)
+
+Linux Kernel Memory:
+https://en.wikibooks.org/wiki/The_Linux_Kernel/Memory
+
+Correct sequence of memory access while running program:
+https://www.quora.com/What-is-the-correct-sequence-of-memory-access-while-running-a-computer-program
+
+https://stackoverflow.com/questions/18278803/how-does-elf-file-format-defines-the-stack

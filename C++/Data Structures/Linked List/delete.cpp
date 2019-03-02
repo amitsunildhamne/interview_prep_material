@@ -46,7 +46,8 @@ void delete_item(int data)
 
     if(curr->data ==data)
     {
-      prev->next = curr->next;delete(curr);
+      prev->next = curr->next;
+      delete(curr);
     }
     prev = curr;
     curr = curr->next;
