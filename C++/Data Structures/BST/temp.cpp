@@ -157,20 +157,20 @@ int isBST(Node *root)
 
 int main()
 {
-  Node *root = NULL;
-  root = Insert(root,15);
-  root = Insert(root,10);
-  root = Insert(root,20);
-  root = Insert(root,25);
-  root = Insert(root,8);
-  root = Insert(root,12);
-  root = Insert(root, 27);
-  root = Insert(root, 29);
-  Print(root);
-  cout<<endl;
-  cout<<MaxHeight(root)<<endl;
-  bfs(root);
-  isBST(root);
-  void deleteNode( Node *root, int value);
+	Node *root = NULL;
+	root = Insert(root,15);
+	root = Insert(root,10);
+	root = Insert(root,20);
+	root = Insert(root,25);
+	root = Insert(root,8);
+	root = Insert(root,12);
+	root = Insert(root, 27);
+	root = Insert(root, 29);
+	Print(root);
+	cout<<endl;
+	cout<<MaxHeight(root)<<endl;
+	bfs(root);
+	isBST(root);
+	void deleteNode( Node *root, int value);
   return 0;
 }

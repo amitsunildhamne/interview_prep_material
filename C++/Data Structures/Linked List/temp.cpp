@@ -1,105 +1,114 @@
-#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 
-using namespace std;
+typedef struct Node {
+	unsigned int data;
+	struct Node *next;
+} Node;
 
-struct Node
+Node *create_node(unsigned int data)
 {
-  int data;
-  Node* next;
-};
-
-Node* Insert(int data, Node* head)
-{
-  Node* node = new Node();
-  node->data = data;
-  node->next = NULL;
-  if (head==NULL) return node;
-  Node* curr = head;
-  while(curr->next)
-  {
-    curr = curr->next;
-  }
-  curr->next = node;
-  return head;
+	Node *node = (Node *)malloc(sizeof(Node));
+	node->data = data;
+	node->next = NULL;
+	return node;
 }
 
-void print(Node* head)
+ Node *InsertNode(Node *head,unsigned int data)
 {
-  while(head)
-  {
-    cout<<head->data<<" ";
-    head = head->next;
-  }
-  cout<<endl;
+	Node *node = create_node(data);
+	if (head == NULL) {
+		head = node;
+	} else {
+		Node *curr = head;
+		while(curr->next != NULL) {
+			curr = curr->next;
+		}
+		curr->next = node;
+	}
+
+	return head;
 }
 
-Node* Delete(int data_to_be_found, Node* head)
+Node *DeleteNode(Node *head,unsigned int pos)
 {
-  Node* curr = head;
-  Node* prev = NULL;
-  if (head==NULL) return NULL;
-  if (head->data==data_to_be_found)
-  {
-    head= head->next;
-    delete curr;
-    return head;
-  }
-  while(curr)
-  {
-    prev = curr;
-    curr = curr->next;
-    if(curr->data == data_to_be_found)
-    {
-      prev->next = curr->next;
-      delete curr;
-      break;
-    }
-  }
-  return head;
+	Node *curr = head, *prev = NULL;
+	unsigned int itr = 0;
+
+	if (head == NULL) {
+		printf("Empty list\n");
+	} else if (pos == itr) {
+		head = head->next;
+		free(curr);
+	} else {
+		curr = curr->next;
+		prev = curr;
+		++itr;
+		while(curr != NULL) {
+			if (pos == itr) {
+				prev->next = curr->next;
+				free(curr);
+				break;
+			}
+			++itr;
+			prev = curr;
+			curr = curr->next;
+		}
+	}
+
+	return head;
 }
 
-Node* Rev(Node* head)
+unsigned int FindMiddleElement(Node *head)
 {
-  if (head==NULL) return NULL;
-  Node* next;
-  Node* prev=NULL;
-  Node* curr = head;
-  while(curr)
-  {
-    next = curr->next;
-    curr->next = prev;
-    prev = curr;
-    curr = next;
-  }
-  return prev;
+	Node *FastPtr = head, *SlowPtr = head;
+	while ((FastPtr != NULL) && (FastPtr->next != NULL)) {
+		SlowPtr = SlowPtr->next;
+		FastPtr = FastPtr->next->next;
+	}
+	return SlowPtr->data;
 }
 
-Node* findIntersection(Node* head1, Node* head2)
+void PrintList(Node *head)
 {
-  Node* p1 = head1;
-  Node* p2 = head2;
-  if (p1==NULL || p2==NULL) return NULL;
-  while(p1!=NULL && p2!=NULL && p1!=P2)
-  {
-    p1=p1->next;
-    p2=p2->next;
-    if (p1==NULL) p1 = head2;
-    if(p2==NULL) p2 = head1;
-    if(p1==p2) return p1;
-  }
-  return NULL;
+	printf("List Data:\n");
+	while(head != NULL) {
+		printf("%u ", head->data);
+		head = head->next;
+	}
+	printf("NULL\n");
+}
+
+Node *ReverseList(Node *head)
+{
+	Node *curr = head, *prev = NULL, *next = NULL;
+	while (curr != NULL) {
+		next = curr->next;
+		curr->next = prev;
+		prev = curr;
+		curr = next;
+	}
+	return prev;
 }
 
 int main()
 {
-  Node* head = NULL;
-  head = Insert(1,head);
-  head = Insert(2,head);
-  head = Insert(3,head);
-  head = Insert(4,head);
-  head = Insert(5,head);
-  head = Delete(5,head);
-  head = Rev(head);
-  print(head);
-  return 0;
+	Node *head = NULL;
+	head = InsertNode(head, 5);
+	head = InsertNode(head, 4);
+	head = InsertNode(head, 3);
+	head = InsertNode(head, 2);
+	head = InsertNode(head, 1);
+	PrintList(head);
+
+	/* Delete at pos */
+	head = DeleteNode(head, 2);
+	head = DeleteNode(head, 0);
+	PrintList(head);
+
+	printf("Middle element: %u\n", FindMiddleElement(head));
+
+	head = ReverseList(head);
+	PrintList(head);
+	return 0;
 }

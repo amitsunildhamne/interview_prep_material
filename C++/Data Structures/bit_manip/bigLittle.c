@@ -11,7 +11,7 @@ void check_endian(int a)
 
 int main()
 {
-	int a = 0x01234567;
+	unsigned int a = 0x01234567;
 	check_endian(a);
 	return 0;
 }

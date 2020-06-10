@@ -45,7 +45,7 @@ void bfs(Node* root)
     while(sz-->0)
     {
       Node* temp = q.front();
-      cout<<temp->data<<endl;
+      cout<<temp->data<<" ";
       q.pop();
       if(temp->left!=NULL) q.push(temp->left);
       if(temp->right!=NULL) q.push(temp->right);

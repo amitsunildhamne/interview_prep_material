@@ -10,6 +10,7 @@ First bin contains {4, 4, 2} and second bin {8, 2}
 Input:  wieght[]       = {9, 8, 2, 2, 5, 4}
         Bin Capacity c = 10
 Output: 4
+Link : https://www.geeksforgeeks.org/bin-packing-problem-minimize-number-of-used-bins/
 */
 
 #include <map>
