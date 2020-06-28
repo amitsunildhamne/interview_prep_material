@@ -44,21 +44,16 @@ void print_list(Node *head)
 
 void Remove(Node *head, Node *ptr)
 {
-  Node *ptr1 = head, *ptr2;
-  while(1)
-  {
-    ptr2 = ptr;
-    while(ptr2 != ptr && ptr2 != ptr1)
-    {
-      ptr2 = ptr2->next;
-    }
-    if (ptr2->next == ptr1)
-    {
-        ptr2->next = NULL;
-        break;
-    }
-    ptr1 = ptr1->next;
-  }
+	Node *ptr1=head, *ptr2 = NULL;
+	while(1) {
+		ptr2 = ptr;
+		while ((ptr2->next != ptr) && (ptr2->next != ptr1))
+			ptr2 = ptr2->next;
+		if (ptr2->next == ptr1)
+			break;
+		ptr1 = ptr1->next;
+	}
+	ptr2->next = NULL;
 }
 
 bool isCircularAndRemove(Node *head)

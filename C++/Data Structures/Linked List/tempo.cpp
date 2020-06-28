@@ -8,6 +8,18 @@ struct Node
   Node *next;
 };
 
+Node *Reverse(Node *head)
+{
+	Node *curr = head, *prev = NULL, *next = NULL;
+	while(curr != NULL) {
+		next = curr->next;
+		curr->next = prev;
+		prev = curr;
+		curr = next;
+	}
+	return prev;
+}
+
 Node *Insert(Node* head, int value)
 {
   Node *node = new Node();
@@ -159,6 +171,8 @@ int main()
   head = reverse(head);
   print_list(head);
   head = sort_list(head);
+  print_list(head);
+  head =  Reverse(head);
   print_list(head);
   return 0;
 }
