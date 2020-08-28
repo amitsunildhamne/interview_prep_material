@@ -1,112 +1,73 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
-typedef struct Node{
-	int data;
-	struct Node *next;
-}Node;
+/*Example for fast pointer and slow pointer*/
+#include <iostream>
 
-Node *DeleteNode(Node *head, int pos)
+using namespace std;
+
+struct Node{
+  int data;
+  Node* next;
+};
+
+Node* Insert(int data, Node* head)
 {
-	Node *curr = head, *prev = NULL;
-	int i=0;
-	if (head == NULL)
-		return head;
+  Node* node = new Node();
+  node->data = data;
+  node->next = NULL;
+  if (head==NULL) return node;
+  Node* curr = head;
+  while(curr->next) curr = curr->next;
+  curr->next = node;
+  return head;
+}
 
-	if (pos == 0) {
-		head = head->next;
-		free(curr);
-	} else {
-		while(curr!=NULL) {
-			if ((i == pos) && (prev!=NULL) && (prev->next!=NULL)) {
-				prev->next = curr->next;
-				free(curr);
-				break;
-			}
-			prev = curr;
-			curr = curr->next;
-			++i;
+void Print(Node* head)
+{
+  while(head)
+  {
+    cout<<head->data<<" ";
+    head = head->next;
+  }
+  cout<<endl;
+}
+
+Node* InsertLoop(Node* head)
+{
+  Node* curr = head;
+  Node* toLoop;
+  while(curr->next!=NULL)
+  {
+    if (curr->data == 2) toLoop=curr;
+    curr = curr->next;
+  }
+  curr->next = toLoop;
+  return head;
+}
+
+bool isCircular(Node* head)
+{
+	Node *fastPtr = head, *slowPtr = head;
+	bool ret_val = false;
+	while((fastPtr != NULL) && (fastPtr->next != NULL)) {
+		slowPtr = slowPtr->next;
+		fastPtr = fastPtr->next->next;
+		if (slowPtr == fastPtr) {
+			ret_val = true;
+			break;
 		}
 	}
 
-	return head;
+	return ret_val;
 }
 
-Node *InsertNode(Node *head, int data)
+int main()
 {
-	Node *curr = head;
-	Node *node = (Node *)malloc(sizeof(Node));
-	node->data = data;
-	node->next = NULL;
-
-	if (head == NULL) {
-		head = node;
-	} else {
-		while(curr->next!=NULL)
-			curr = curr->next;
-		curr->next = node;
-	}
-
-	return head;
-}
-
-Node *ReverseList(Node *head)
-{
-	Node *curr=head, *prev=NULL, *next=NULL;
-
-	while(curr!=NULL) {
-		next = curr->next;
-		curr->next = prev;
-		prev = curr;
-		curr = next;
-	}
-	head = prev;
-
-	return head;
-}
-
-void PrintList(Node *head)
-{
-	while(head!=NULL) {
-		printf("%d\t",head->data);
-		head = head->next;
-	}
-	printf("\n");
-}
-
-int FindMiddleElement(Node *head)
-{
-	int ret_val = INT_MIN;
-	Node *fast_ptr = head, *slow_ptr = head;
-	if ((fast_ptr==NULL) || (fast_ptr->next==NULL))
-		return (fast_ptr==NULL?ret_val:fast_ptr->data);
-
-	while((fast_ptr!=NULL) && (fast_ptr->next!=NULL)) {
-		slow_ptr = slow_ptr->next;
-		fast_ptr = fast_ptr->next->next;
-	}
-	return slow_ptr->data;
-}
-
-int main(void)
-{
-	Node *head = NULL;
-	head = InsertNode(head, 5);
-	head = InsertNode(head, 4);
-	head = InsertNode(head, 3);
-	head = InsertNode(head, 2);
-	head = InsertNode(head, 1);
-	PrintList(head);
-
-	/* Delete at pos */
-	head = DeleteNode(head, 2);
-	head = DeleteNode(head, 0);
-	PrintList(head);
-
-	printf("Middle element: %d\n", FindMiddleElement(head));
-
-	head = ReverseList(head);
-	PrintList(head);
-
-	return 0;
+  Node* head = NULL;
+  head = Insert(1,head);
+  head = Insert(2,head);
+  head = Insert(3,head);
+  head = Insert(4,head);
+  head = Insert(5,head);
+  head = InsertLoop(head);
+  cout<<"Is the Linkedlist circular "<<isCircular(head)<<endl;
+  return 0;
 }
