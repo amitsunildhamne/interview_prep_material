@@ -1,40 +1,51 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-void reverse(char *a, int start, int end)
+void Reverse(char *str, int hi, int lo)
 {
-  char temp;
-  for(int i = start, j = end-1; i <= j; ++i, --j)
-  {
-    temp = a[i];
-    a[i] = a[j];
-    a[j] = temp;
-  }
-  printf("In fn=%s a = %s start=%d end=%d\n", __FUNCTION__, a, start, end);
+	int len = hi - lo + 1;
+	char temp;
+
+//	printf("length:%d\n", len);
+	for(int i=0; i<len/2; ++i) {
+		temp = str[i+lo];
+//		printf("str[%d]:%c str[%d]:%c\n", i, temp, lo+len-1-i, str[lo+len-1-i] );
+		str[i+lo] = str[hi-i];
+		str[hi-i] = temp;
+	}
 }
 
-void word_reverse(char *a, int length)
+void ReverseWords(char *str)
 {
-  int i,j;
-  i=0;
-  j=0;
-  while(j < strlen(a)+1)
-  {
-    if( j == strlen(a) || a[j] == ' ')
-    {
-      printf("a=%s i=%d j=%d\n", a, i, j );
-      reverse(a, i , j);
-      i = j+1;
-    }
-    j++;
-  }
+	int lo=0, hi=0;
+	char *ch = str;
+	while(*ch != '\0') {
+//		printf("%c", *ch);
+		if (*ch != ' ') {
+			++hi;
+			++ch;
+			continue;
+		}
+		printf("lo:%d hi:%d ch:%c\n", lo, hi, *ch);
+		Reverse(str, hi-1, lo);
+		printf("%s\n", str);
+		lo = hi+1;
+		hi = hi+1;
+		++ch;
+	}
+	printf("lo:%d hi:%d ch:%c\n", lo, hi, *ch);
+	Reverse(str, hi-1, lo);
 }
 
-int main()
+int main(void)
 {
-  char a[100] = "My name is amit";
-  reverse(a, 0, strlen(a));
-  word_reverse(a , strlen(a));
-  printf("%s\n", a);
-  return 0;
+	char str[] = "Amit  is a bad cat";
+	printf("%s\n", str);
+	Reverse(str, strlen(str)-1, 0);
+	printf("%s\n", str);
+	ReverseWords(str);
+	printf("%s\n", str);
+	return 0;
 }
+
