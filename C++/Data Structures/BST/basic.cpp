@@ -42,7 +42,7 @@ bool Search(Node* root, int data)
 int main()
 {
   Node* root;
-  root = Insert(root,15);
+	root = Insert(root,15);
 	root = Insert(root,10);
 	root = Insert(root,20);
 	root = Insert(root,25);

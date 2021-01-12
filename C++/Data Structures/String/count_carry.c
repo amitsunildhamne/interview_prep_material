@@ -1,35 +1,34 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdint.h>
+#include <string.h>
 
-uint32_t count_carry(char *str1, char *str2)
+int count_carry(char *a , char *b)
 {
-	uint32_t ret_val = 0;
-	int str1_len = strlen(str1);
-	int str2_len = strlen(str2);
-	int x=0, y=0, carry = 0, i=str1_len-1, j=str2_len-1;
+	int ret_val = 0;
+	int a_len = strlen(a), b_len = strlen(b);
+	int i = a_len-1, j = b_len-1;
+	int num1 = 0, num2 = 0;
+	int carry = 0;
 
-	while ((i>=0) && (j>=0)) {
-		x = (int)(str1[i] - '0');
-		y = (int)(str2[j] - '0');
-		ret_val += (uint32_t)((x+y+carry)/10);
-		carry = (x+y+carry)/10;
-		--i; --j;
+	for(;(i>=0)||(j>=0);) {
+		num1 = 0;
+		num2 = 0;
+		if (i>=0) {
+			num1 = (int)(a[i]-'0');
+			--i;
+		}
+		if (j>=0) {
+			num2 =(int)(b[j]-'0');
+			--j;
+		}
+		carry = (num1+num2+carry)/10;
+		ret_val += carry;
 	}
-	if (i>=0) {
-		x = (int)(str1[i]-'0');
-		ret_val += (x+carry)/10;
-	} else if (j>=0) {
-		y = (int)(str2[j]-'0');
-		ret_val += (y+carry)/10;
-	} 
-	
 	return ret_val;
 }
-int main()
+
+int main(void)
 {
-	char *str1 = "9555";
-	char *str2 = "555";
-	printf("%u\n", count_carry(str2, str1));
+	printf("%d\n", count_carry("9555", "5"));
 	return 0;
 }

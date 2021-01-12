@@ -1,131 +1,105 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <limits.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
 #include <queue>
 
 using namespace std;
 
-struct Node {
+typedef struct Node{
 	int data;
 	struct Node *left, *right;
-};
+} Node ;
 
 Node *GenerateNode(int data)
 {
-	Node *node = (Node *)malloc(sizeof(Node));
-	node->data = data;
-	node->left = node->right = NULL;
-	return node;
+	Node *root = (Node *)malloc(sizeof(Node));
+	root->data = data;
+	root->left = root->right = NULL;
+	return root;
 }
 
 Node *Insert(Node *root, int data)
 {
-	if (root == NULL) {
-		Node *node = GenerateNode(data);
-		root = node;
+	if(root == NULL) {
+		root = GenerateNode(data);
 	} else if (root->data > data) {
 		root->left = Insert(root->left, data);
-	} else if (root->data <= data) {
+	} else {
 		root->right = Insert(root->right, data);
 	}
-
 	return root;
 }
 
 void Print(Node *root)
 {
-	if (root==NULL)
+	if (root == NULL)
 		return;
 	Print(root->left);
-	printf("%d\t", root->data);
+	printf("%d\n", root->data);
 	Print(root->right);
 }
 
-int MaxHeight(Node *root)
+int Height(Node *root)
 {
-	if (root == NULL)
-		return 0;
-	return max(MaxHeight(root->left), MaxHeight(root->right))+1;
-}
-
-int NoN(Node *root)
-{
-	if (root == NULL)
-		return 0;
-	return NoN(root->left) + NoN(root->right) + 1;
-}
-
-void bfs(Node *root)
-{
-	queue<Node*> Q;
 	if (root==NULL)
-		return;
-	Q.push(root);
-	printf("BFS:\t");
-	while(Q.empty() != true) {
-		Node *temp = Q.front();
-		Q.pop();
-		printf("%d\t",temp->data);
-		if (temp->left != NULL)
-			Q.push(temp->left);
-		if (temp->right != NULL)
-			Q.push(temp->right);
+		return -1;
+	return max(Height(root->left), Height(root->right)) + 1;
+}
+
+void BFS(Node *root)
+{
+	printf("BFS\n");
+	queue <Node *> q;
+	q.push(root);
+	while(q.size() > 0 ) {
+		Node *node = q.front();
+		q.pop();
+		printf("%d\n", node->data);
+		if (node->left != NULL)
+			q.push(node->left);
+		if (node->right != NULL)
+			q.push(node->right);
 	}
-	printf("\n");
 }
 
-void modified_bfs(Node *root)
+int MinHeight(Node *root)
 {
-	int size = 0, MinHght = 0, flag = 0;
-	queue<Node *> Q;
-	if (root==NULL)
-		return;
-	
-	Q.push(root);
-	printf("Modified BST\n");
-	MinHght = 1;
+	int size = 0;
+	int ret_val = 0;
+	int flag =0;
+	Node *node = NULL;
+	queue<Node *> q;
+	q.push(root);
+
+	printf("\nMinHeight\n");
 	while(1) {
-		size = Q.size();
+		size = q.size();
 		if (size == 0)
 			break;
-		while(size > 0) {
-			Node *temp = Q.front();
-			printf("%d\t", temp->data);
-			Q.pop();
-			if (temp->left != NULL)
-				Q.push(temp->left);
-			if (temp->right!=NULL)
-				Q.push(temp->right);
-			if ((temp->left == NULL) && (temp->right == NULL))
-				flag = 1;
+		while(size>0) {
+			node = q.front();
+			q.pop();
+				printf("%d ", node->data);
+			if ((node->left ==NULL) && (node->right==NULL)) {
+				flag =1;
+				break;
+			}
+			if (node->left != NULL)
+				q.push(node->left);
+			if(node->right != NULL)
+				q.push(node->right);
 			--size;
 		}
-		if (flag==0)
-			++MinHght;
 		printf("\n");
+
+		if (flag == 1) {
+			printf("Entered here\n");
+			break;
+		}
+		++ret_val;
 	}
-	printf("END\n");
-	printf("MinHght: %d\n", MinHght);
-}
-
-int IsBstHelper(Node *root, int min, int max)
-{
-	if (root==NULL)
-		return 1;
-	if ((root->data >= min) &&
-		(root->data<max) &&
-		(IsBstHelper(root->left, min, root->data)) &&
-		(IsBstHelper(root->right, root->data, max)) )
-		return 1;
-	return 0;
-}
-
-int isBST(Node *root)
-{
-	int min = INT_MIN;
-	int max = INT_MAX;
-	return IsBstHelper(root, min, max);
+	return ret_val;
 }
 
 int main(void)
@@ -135,17 +109,12 @@ int main(void)
 	root = Insert(root,10);
 	root = Insert(root,20);
 	root = Insert(root,25);
+
 	root = Insert(root,8);
 	root = Insert(root,12);
-	root = Insert(root, 27);
-	root = Insert(root, 29);
 	Print(root);
-	printf("\n");
-	printf("Number of Nodes: %d\n",NoN(root));
-	printf("MaxHght:0x%x\n", MaxHeight(root));
-	bfs(root);
-	modified_bfs(root);
-	isBST(root);
-
+	printf("%d\n", Height(root));
+//	BFS(root);
+	printf("MinHeight: %d\n", MinHeight(root));
 	return 0;
 }
