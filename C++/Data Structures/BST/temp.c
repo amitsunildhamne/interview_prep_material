@@ -1,120 +1,71 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <queue>
+#include <stdio.h>
+#include <stdlib.h>
 
-using namespace std;
+typedef struct Node Node;
 
-typedef struct Node{
+struct Node {
 	int data;
-	struct Node *left, *right;
-} Node ;
-
-Node *GenerateNode(int data)
-{
-	Node *root = (Node *)malloc(sizeof(Node));
-	root->data = data;
-	root->left = root->right = NULL;
-	return root;
-}
+	Node *left;
+	Node *right;
+};
 
 Node *Insert(Node *root, int data)
 {
-	if(root == NULL) {
-		root = GenerateNode(data);
-	} else if (root->data > data) {
-		root->left = Insert(root->left, data);
-	} else {
+	if (root == NULL) {
+		root = (Node *)malloc(sizeof(int));
+		root->left = NULL;
+		root->right = NULL;
+		root->data = data;
+	} else if (root->data < data) {
 		root->right = Insert(root->right, data);
+	} else {
+		root->left = Insert(root->left, data);
 	}
+
 	return root;
 }
 
-void Print(Node *root)
+void Inorder(Node *root)
 {
-	if (root == NULL)
+	if (NULL == root) {
 		return;
-	Print(root->left);
-	printf("%d\n", root->data);
-	Print(root->right);
-}
-
-int Height(Node *root)
-{
-	if (root==NULL)
-		return -1;
-	return max(Height(root->left), Height(root->right)) + 1;
-}
-
-void BFS(Node *root)
-{
-	printf("BFS\n");
-	queue <Node *> q;
-	q.push(root);
-	while(q.size() > 0 ) {
-		Node *node = q.front();
-		q.pop();
-		printf("%d\n", node->data);
-		if (node->left != NULL)
-			q.push(node->left);
-		if (node->right != NULL)
-			q.push(node->right);
 	}
+	Inorder(root->left);
+	printf("%d\t", root->data);
+	Inorder(root->right);
 }
 
-int MinHeight(Node *root)
-{
-	int size = 0;
-	int ret_val = 0;
-	int flag =0;
-	Node *node = NULL;
-	queue<Node *> q;
-	q.push(root);
 
-	printf("\nMinHeight\n");
-	while(1) {
-		size = q.size();
-		if (size == 0)
-			break;
-		while(size>0) {
-			node = q.front();
-			q.pop();
-				printf("%d ", node->data);
-			if ((node->left ==NULL) && (node->right==NULL)) {
-				flag =1;
-				break;
-			}
-			if (node->left != NULL)
-				q.push(node->left);
-			if(node->right != NULL)
-				q.push(node->right);
-			--size;
-		}
-		printf("\n");
-
-		if (flag == 1) {
-			printf("Entered here\n");
-			break;
-		}
-		++ret_val;
-	}
-	return ret_val;
-}
 
 int main(void)
 {
-	Node *root = NULL;
-	root = Insert(root,15);
+  /*Code To Test the logic
+	  Creating an example tree
+	            5
+			   / \
+			  3   10
+			 / \   \
+			1   4   11
+    */
+	Node* root = NULL;
+	root = Insert(root,5);
 	root = Insert(root,10);
-	root = Insert(root,20);
-	root = Insert(root,25);
+	root = Insert(root,3);
+	root = Insert(root,4);
+	root = Insert(root,1);
+	root = Insert(root,11);
 
-	root = Insert(root,8);
-	root = Insert(root,12);
-	Print(root);
-	printf("%d\n", Height(root));
-//	BFS(root);
-	printf("MinHeight: %d\n", MinHeight(root));
+	//Print Nodes in Inorder
+	printf("Inorder Traversal:\n");
+	Inorder(root);
+	printf("\n");
+
+	// Find Inorder successor of some node.
+	Node* successor = -1;
+	GetSuccessor(root,1, successor);
+	if(successor == NULL)
+		printf("No successor Found\n");
+	else
+		printf("Successor is %d\n", successor->data);
 	return 0;
 }

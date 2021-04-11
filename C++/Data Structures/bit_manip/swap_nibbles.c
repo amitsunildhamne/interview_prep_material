@@ -8,7 +8,7 @@ uint8_t swap_nibbles(uint8_t i)
 
 uint32_t SwapNibbles(uint32_t x)
 {
-	return ((x & 0xffff0000)>>16) | ((x & 0xffff) << 16);
+	return ((x & (0xff << 24))>>24 | (x & (0xff << 16))>>8 | (x & (0xff << 8))<<8 | (x & (0xff))<<24);
 }
 
 int main()
